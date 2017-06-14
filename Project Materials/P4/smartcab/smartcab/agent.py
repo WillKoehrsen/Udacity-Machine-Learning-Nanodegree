@@ -74,13 +74,8 @@ class LearningAgent(Agent):
         """ The get_max_Q function is called when the agent is asked to find the
             maximum Q-value of all actions based on the 'state' the smartcab is in. """
 
-        # Calculate the maximum Q-value of all actions for a given state
-        maxQ = -float("inf") 
-
-        # Iterate through all actions in state and return highest Q-value
-        for action in self.Q[state]:
-            if self.Q[state][action] > maxQ:
-                maxQ = self.Q[state][action]
+        # Search through all actions in the given state and return the action with the highest Q value
+        maxQ = max(self.Q[state].values())
 
         return maxQ 
 
@@ -118,17 +113,13 @@ class LearningAgent(Agent):
         if self.learning:
         	# Choose random move with probability epsilon
         	if random.random() <= self.epsilon:
-        		action = self.valid_actions[random.randint(0, len(self.valid_actions) - 1)]
+        		action = random.choice(self.valid_actions)
 
         	# Select best move based on Q score
         	else:
-        		best_actions = []
-        		maxQ = self.get_maxQ(state)
-        		for action in self.Q[state]:
-        			if self.Q[state][action] == maxQ:
-        				best_actions.append(action)
-        		# If multiple actions have same Q score, randomly select action
-        		action = best_actions[random.randint(0, len(best_actions) -1)]
+        		# Find all actions with highest Q value
+        		best_actions = [action for action in self.valid_actions if self.Q[state][action] == maxQ] 
+        		action = random.choice(best_actions) # Use random selection to break ties among actions
 
         # Not learning
         elif not self.learning:
